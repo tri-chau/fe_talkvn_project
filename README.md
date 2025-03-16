@@ -42,7 +42,7 @@ This repository contains the frontend code for chit chat, a social networking pl
 1. **Clone the repository**:
 
    ```bash
-   https://github.com/thanhpt1110/chit-chat-frontend
+   https://github.com/LeMinhHoang1204/fe_talkVN_project.git
    cd chit-chat-frontend
    ```
 
@@ -88,6 +88,7 @@ This repository contains the frontend code for chit chat, a social networking pl
 
 ---
 
+<<<<<<< HEAD
 ## 🤝 Authors
 
 [Lê Thanh Tuấn](https://github.com/thtuanlegithub)
@@ -186,4 +187,6 @@ This repository contains the frontend code for chit chat, a social networking pl
 
 ---
 
+=======
+>>>>>>> d68c428 (Update README.md)
 ## 🤝 Author
