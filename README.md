@@ -88,7 +88,6 @@ This repository contains the frontend code for chit chat, a social networking pl
 
 ---
 
-<<<<<<< HEAD
 ## 🤝 Authors
 
 [Lê Thanh Tuấn](https://github.com/thtuanlegithub)
@@ -187,6 +186,4 @@ This repository contains the frontend code for chit chat, a social networking pl
 
 ---
 
-=======
->>>>>>> d68c428 (Update README.md)
 ## 🤝 Author
