@@ -1,3 +1,3 @@
-export const apiBaseUrl = "https://18.138.250.74/api";
+export const apiBaseUrl = "https://14.191.231.143:8081/api";
 
-export const socketBaseUrl = "https://18.138.250.74";
+export const socketBaseUrl = "https://14.191.231.143:8081/api";
