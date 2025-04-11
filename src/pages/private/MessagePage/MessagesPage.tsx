@@ -5,11 +5,10 @@ import {
   LogLevel,
 } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
-import { OpenSendNewMessageOutlineIcon } from "../../../components/icons/OpenSendNewMessageOutlineIcon";
 import MessageItemInList from "../../../components/MessageItemInList";
-import UserNameDisplay from "../../../components/UserNameDisplay";
 import {
   GET_CONVERSATION_LIST_PAGE_SIZE,
+  useCreateConversationByUsernameMutation,
   useGetConversationListQuery,
 } from "../../../data/conversation/conversation.api";
 import { GlobalState } from "../../../data/global/global.slice";
@@ -29,14 +28,16 @@ function MessagesPage() {
   const [chatter, setChatter] = useState<UserDTO>();
 
   const [selectedMessageId, setSelectedMessageId] = useState<string>(
-    messageListData?.data?.[0].messageId || ""
+    messageListData?.data?.[0]?.messageId || ""
   );
   const [connection, setConnection] = useState<HubConnection | null>(null);
+
+  const [createConversation] = useCreateConversationByUsernameMutation();
 
   useEffect(() => {
     const setupSignalR = async () => {
       const newConnection = new HubConnectionBuilder()
-        .withUrl(`${socketBaseUrl}/hubs/conversation`, {
+        .withUrl(`${socketBaseUrl}/hubs/textchat`, {
           skipNegotiation: true,
           transport: HttpTransportType.WebSockets,
         })
@@ -67,14 +68,54 @@ function MessagesPage() {
     <div className="flex flex-row w-full h-full">
       <div className="border flex flex-col md:w-[420px] h-full overflow-auto">
         <div className="flex flex-row justify-between px-4 pt-8">
-          <UserNameDisplay
+          <div className="flex flex-col gap-2 px-4 pt-6">
+            {/* <div className="flex flex-row justify-between items-center">
+              <UserNameDisplay
+                id={userInfo.userId}
+                className="text-blue-400"
+                username={`@${userInfo.username}`}
+              />
+            </div> */}
+
+            {/* 🔍 Input tìm và tạo chat mới */}
+            {/* 🔍 Input tìm và tạo chat mới */}
+            <input
+              type="text"
+              placeholder="Nhập @username để bắt đầu chat..."
+              className="px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring w-full"
+              onKeyDown={async (e) => {
+                if (e.key === "Enter") {
+                  const input = (e.target as HTMLInputElement).value
+                    .trim()
+                    .replace(/^@/, "");
+
+                  if (!input || input === userInfo.username) return;
+
+                  try {
+                    const res = await createConversation({
+                      username: input,
+                    }).unwrap(); // gọi mutation từ RTK Query
+                    setSelectedMessageId(res.id);
+                    setChatter(res.chatterInfo.chatter);
+                  } catch (err: unknown) {
+                    console.error("Lỗi khi tạo đoạn chat:", err);
+                    alert("Không tìm thấy người dùng hoặc lỗi tạo đoạn chat.");
+                  }
+
+                  (e.target as HTMLInputElement).value = ""; // xoá input sau khi tạo
+                }
+              }}
+            />
+          </div>
+
+          {/* <UserNameDisplay
             id={userInfo.userId}
             className="text-blue-400"
             username={`@${userInfo.username}`}
           />
           <button>
             <OpenSendNewMessageOutlineIcon />
-          </button>
+          </button> */}
         </div>
         <div className="flex flex-row px-4 py-2">
           <div className="font-bold">Messages</div>
@@ -92,17 +133,19 @@ function MessagesPage() {
               messageItemData={message}
             />
           ))}
-          {/* {messageListData?.data.length === 0 && <></>}
-          <div className="h-full flex flex-col justify-center items-center">
-            <ImageWithFallback
+          {messageListData?.data.length === 0 && (
+            // <></>}
+            <div className="h-full flex flex-col justify-center items-center">
+              {/* <ImageWithFallback
               className="h-24 w-24"
               src="/assets/images/empty-message.svg"
               alt="empty-message"
-            />
-            {
-              "No messages yet. Start a conversation by sending a message to someone."
-            }
-          </div> */}
+            /> */}
+              {
+                "No messages yet. Start a conversation by sending a message to someone."
+              }
+            </div>
+          )}
         </div>
       </div>
       {chatter && (
