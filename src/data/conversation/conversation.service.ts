@@ -6,12 +6,12 @@ export const getMessageListItemDTO = (
   data: GetConversationListItemRES
 ): MessageItemInListDTO => ({
   messageId: data.id,
-  latestMessage: data.lastMessage.messageText,
-  time: data.lastMessage.updatedOn,
+  latestMessage: data.lastMessage?.messageText,
+  time: data.lastMessage?.updatedOn,
   isRead: data.isSeen,
   userDisplayName: data.userReceivers[0].displayName,
   userImageUrl: data.userReceivers[0].avatarUrl,
-  fromMe: data.lastMessage.senderId === data.userReceivers[0].id,
+  fromMe: data.lastMessage?.senderId === data.userReceivers[0].id,
   receiverId: data.userReceivers[0].id,
 });
 

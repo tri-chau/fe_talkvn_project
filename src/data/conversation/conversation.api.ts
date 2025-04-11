@@ -99,6 +99,16 @@ const conversationApi = usersApi.injectEndpoints({
         }),
       }
     ),
+    createConversationByUsername: build.mutation<
+      { id: string; chatterInfo: ConversationInformationDTO }, // kiểu dữ liệu trả về từ BE
+      { username: string } // kiểu dữ liệu gửi lên
+    >({
+      query: (body) => ({
+        url: `/conversations/create`,
+        method: HTTP_METHOD.POST,
+        body,
+      }),
+    }),
   }),
 });
 
@@ -107,4 +117,5 @@ export const {
   useGetConversationDetailQuery,
   usePostAddNewMessageMutation,
   useLazyGetConversationInformationQuery,
+  useCreateConversationByUsernameMutation,
 } = conversationApi;
