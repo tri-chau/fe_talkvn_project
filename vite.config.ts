@@ -1,6 +1,5 @@
 import react from "@vitejs/plugin-react";
 import dotenv from "dotenv";
-import fs from "fs";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
@@ -12,14 +11,14 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       open: true,
-      ...(mode === "development"
-        ? {
-            https: {
-              key: fs.readFileSync("C:/Users/ASUS/Downloads/localhost-key.pem"),
-              cert: fs.readFileSync("C:/Users/ASUS/Downloads/localhost.pem"),
-            },
-          }
-        : {}),
+      // ...(mode === "development"
+      //   ? {
+      //       https: {
+      //         key: fs.readFileSync("C:/Users/ASUS/Downloads/localhost-key.pem"),
+      //         cert: fs.readFileSync("C:/Users/ASUS/Downloads/localhost.pem"),
+      //       },
+      //     }
+      //   : {}),
     },
   };
 });
