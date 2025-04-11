@@ -94,7 +94,7 @@ const VideoCall: React.FC = () => {
     };
 
     const connection = new HubConnectionBuilder()
-      .withUrl(`${socketBaseUrl}/hubs/conversation`, {
+      .withUrl(`${socketBaseUrl}/hubs/textChat`, {
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
       })
