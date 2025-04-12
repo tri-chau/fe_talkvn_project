@@ -66,6 +66,7 @@ const VideoCall: React.FC = () => {
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         console.log("Sending ICE candidate:", event.candidate);
+        console.log("ICE Candidate Details:", event.candidate.candidate);
         connectionRef.current?.invoke(
           WEB_SOCKET_EVENT.SEND_ICE_CANDIDATE,
           conversationId,
@@ -104,37 +105,50 @@ const VideoCall: React.FC = () => {
     connectionRef.current = connection;
 
     connection.on(WEB_SOCKET_EVENT.RECEIVE_OFFER, async (connectionId, sdp) => {
-      console.log("Received Offer:", sdp);
-      await peerConnection.setRemoteDescription(
-        new RTCSessionDescription({ type: "offer", sdp })
-      );
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      connection.invoke(
-        WEB_SOCKET_EVENT.SEND_ANSWER,
-        conversationId,
-        answer.sdp
-      );
-      while (iceCandidatesQueue.current.length > 0) {
-        const candidate = iceCandidatesQueue.current.shift();
-        if (candidate) {
-          await peerConnection.addIceCandidate(candidate);
-        }
-      }
-    });
-
-    connection.on(
-      WEB_SOCKET_EVENT.RECEIVE_ANSWER,
-      async (connectionId, sdp) => {
-        console.log("Received Answer:", sdp);
+      try {
+        console.log("Received Offer:", sdp);
         await peerConnection.setRemoteDescription(
-          new RTCSessionDescription({ type: "answer", sdp })
+          new RTCSessionDescription({ type: "offer", sdp })
+        );
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        connection.invoke(
+          WEB_SOCKET_EVENT.SEND_ANSWER,
+          conversationId,
+          answer.sdp
         );
         while (iceCandidatesQueue.current.length > 0) {
           const candidate = iceCandidatesQueue.current.shift();
           if (candidate) {
             await peerConnection.addIceCandidate(candidate);
           }
+        }
+      } catch (error) {
+        console.error("Error handling received offer:", error);
+      }
+    });
+
+    connection.on(
+      WEB_SOCKET_EVENT.RECEIVE_ANSWER,
+      async (connectionId, sdp) => {
+        try {
+          console.log("Received Answer:", sdp);
+          if (peerConnection.signalingState === "have-local-offer") {
+            await peerConnection.setRemoteDescription(
+              new RTCSessionDescription({ type: "answer", sdp })
+            );
+            while (iceCandidatesQueue.current.length > 0) {
+              const candidate = iceCandidatesQueue.current.shift();
+              if (candidate) await peerConnection.addIceCandidate(candidate);
+            }
+          } else {
+            console.warn(
+              "⚠️ Cannot set answer, invalid signaling state:",
+              peerConnection.signalingState
+            );
+          }
+        } catch (error) {
+          console.error("Error handling received answer:", error);
         }
       }
     );
@@ -146,8 +160,10 @@ const VideoCall: React.FC = () => {
           const iceCandidate = new RTCIceCandidate(JSON.parse(candidate));
           console.log("Received ICE candidate:", iceCandidate);
           if (peerConnection.remoteDescription) {
+            console.log("🧊 Adding ICE directly");
             await peerConnection.addIceCandidate(iceCandidate);
           } else {
+            console.log("🕓 Queuing ICE until remoteDescription is set");
             iceCandidatesQueue.current.push(iceCandidate);
           }
         } catch (error) {
@@ -196,6 +212,7 @@ const VideoCall: React.FC = () => {
 
     peerConnection.ontrack = (event) => {
       const [stream] = event.streams;
+      console.log("Got remote track!");
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = stream;
       }
