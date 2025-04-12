@@ -345,6 +345,7 @@ const VideoCall: React.FC = () => {
             )}
             style={{
               aspectRatio: "16/9",
+              transform: "scaleX(-1)", // Lật video ngang
             }}
           />
           <h3>Local Video</h3>
@@ -353,7 +354,6 @@ const VideoCall: React.FC = () => {
           <video
             style={{
               aspectRatio: "16/9",
-              transform: "scaleX(-1)", // Lật video ngang
             }}
             ref={remoteVideoRef}
             autoPlay
