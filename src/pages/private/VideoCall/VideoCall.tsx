@@ -33,22 +33,39 @@ const VideoCall: React.FC = () => {
   useEffect(() => {
     const servers = {
       iceServers: [
-        { urls: ["stun:hk-turn1.xirsys.com"] },
+        { urls: ["stun:ss-turn2.xirsys.com"] },
         {
           username:
-            "t1v73xZPzrQUPUYowwXemStxpbhCDT3aafFfGTzjGMmsR929Wrjs20Ujnd5bBeiOAAAAAGdtFGt0aGFuaHB0MTExMA==",
-          credential: "d3e1521c-c363-11ef-8aef-0242ac120004",
+            "ugXCOOeTfYNC6lmhFQ8YwVPdIbFM2VHLtDwoyCRRAr7y9FD5X0WzohTZaXVB-cIwAAAAAGf6Ku5sZW1pbmhob2FuZzEyMDQ=",
+          credential: "2335af5e-177c-11f0-9a69-0242ac140004",
           urls: [
-            "turn:hk-turn1.xirsys.com:80?transport=udp",
-            "turn:hk-turn1.xirsys.com:3478?transport=udp",
-            "turn:hk-turn1.xirsys.com:80?transport=tcp",
-            "turn:hk-turn1.xirsys.com:3478?transport=tcp",
-            "turns:hk-turn1.xirsys.com:443?transport=tcp",
-            "turns:hk-turn1.xirsys.com:5349?transport=tcp",
+            "turn:ss-turn2.xirsys.com:80?transport=udp",
+            "turn:ss-turn2.xirsys.com:3478?transport=udp",
+            "turn:ss-turn2.xirsys.com:80?transport=tcp",
+            "turn:ss-turn2.xirsys.com:3478?transport=tcp",
+            "turns:ss-turn2.xirsys.com:443?transport=tcp",
+            "turns:ss-turn2.xirsys.com:5349?transport=tcp",
           ],
         },
       ],
     };
+    //   iceServers: [
+    //     { urls: ["stun:hk-turn1.xirsys.com"] },
+    //     {
+    //       username:
+    //         "t1v73xZPzrQUPUYowwXemStxpbhCDT3aafFfGTzjGMmsR929Wrjs20Ujnd5bBeiOAAAAAGdtFGt0aGFuaHB0MTExMA==",
+    //       credential: "d3e1521c-c363-11ef-8aef-0242ac120004",
+    //       urls: [
+    //         "turn:hk-turn1.xirsys.com:80?transport=udp",
+    //         "turn:hk-turn1.xirsys.com:3478?transport=udp",
+    //         "turn:hk-turn1.xirsys.com:80?transport=tcp",
+    //         "turn:hk-turn1.xirsys.com:3478?transport=tcp",
+    //         "turns:hk-turn1.xirsys.com:443?transport=tcp",
+    //         "turns:hk-turn1.xirsys.com:5349?transport=tcp",
+    //       ],
+    //     },
+    //   ],
+    // };
 
     // const servers = {
     //   iceServers: [
