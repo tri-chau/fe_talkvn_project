@@ -26,12 +26,15 @@ const VideoCall: React.FC = () => {
   const iceCandidatesQueue = useRef<RTCIceCandidate[]>([]);
   const screenStreamRef = useRef<MediaStream | null>(null); // Ref để lưu stream màn hình
 
-  const [isMuted, setIsMuted] = useState(true); // Trạng thái mic
+  const [isMuted, setIsMuted] = useState(false); // Trạng thái mic
   const [isScreenSharing, setIsScreenSharing] = useState(false); // Trạng thái chia sẻ màn hình
   const [isCameraOn, setIsCameraOn] = useState(true); // Trạng thái camera
 
   useEffect(() => {
     const servers = {
+      //máy chủ STUN/TURN để giúp các trình duyệt tìm thấy nhau dù đang ở mạng khác nhau
+      // STUN server: giúp tìm địa chỉ IP công cộng của máy tính
+      // TURN server: giúp truyền tải dữ liệu giữa các trình duyệt khi không thể kết nối trực tiếp
       iceServers: [
         { urls: ["stun:ss-turn1.xirsys.com"] },
         {
@@ -80,12 +83,14 @@ const VideoCall: React.FC = () => {
     const peerConnection = new RTCPeerConnection(servers);
     peerConnectionRef.current = peerConnection;
 
+    // Sự kiện để các trình duyệt gửi các địa chỉ mạng khả dụng đến nhau -ICE candidate
+    // và quá trình này diễn ra liên tục cho đến khi tìm được đường truyền tốt nhất.”
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         console.log("Sending ICE candidate:", event.candidate);
         console.log("ICE Candidate Details:", event.candidate.candidate);
         connectionRef.current?.invoke(
-          WEB_SOCKET_EVENT.SEND_ICE_CANDIDATE,
+          WEB_SOCKET_EVENT.SEND_ICE_CANDIDATE, //sự kiện gửi
           conversationId,
           JSON.stringify(event.candidate)
         );
@@ -100,6 +105,7 @@ const VideoCall: React.FC = () => {
       console.log("Peer connection state:", peerConnection.connectionState);
     };
 
+    // Gửi lời mời kết nối - offer chứa thông tin về khả năng kết nối của bên gửi
     peerConnection.onnegotiationneeded = async () => {
       console.log("Negotiation needed");
       const offer = await peerConnection.createOffer();
@@ -121,10 +127,13 @@ const VideoCall: React.FC = () => {
       .build();
     connectionRef.current = connection;
 
+    //nhận offer từ người khác
+    // lưu thông tin kết nối đó
     connection.on(WEB_SOCKET_EVENT.RECEIVE_OFFER, async (connectionId, sdp) => {
       try {
         console.log("Received Offer:", sdp);
         await peerConnection.setRemoteDescription(
+          //ưu tiên lưu thông tin kết nối trước
           new RTCSessionDescription({ type: "offer", sdp })
         );
         const answer = await peerConnection.createAnswer();
@@ -145,6 +154,10 @@ const VideoCall: React.FC = () => {
       }
     });
 
+    //nhận answer từ người khác
+    // khi người khác gửi answer thì mình sẽ nhận được và lưu thông tin kết nối
+    //Tại thời điểm này, quá trình thương lượng cấu hình giữa 2 peer đã hoàn tất
+    //nghĩa là cả hai bên đều biết mình có thể kết nối với nhau như thế nào.
     connection.on(
       WEB_SOCKET_EVENT.RECEIVE_ANSWER,
       async (connectionId, sdp) => {
@@ -170,6 +183,10 @@ const VideoCall: React.FC = () => {
       }
     );
 
+    //nhận ICE candidate từ người khác
+    // kiểm tra xem đã có thông tin kết nối chưa
+    // nếu có thì thêm ICE candidate vào peer connection
+    // nếu chưa có thì lưu vào queue để thêm sau
     connection.on(
       WEB_SOCKET_EVENT.RECEIVE_ICE_CANDIDATE,
       async (connectionId, candidate) => {
@@ -209,6 +226,7 @@ const VideoCall: React.FC = () => {
         });
     });
 
+    //lấy thông tin cấu hình video, âm thanh để gửi qua kênh kết nối
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
