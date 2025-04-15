@@ -33,18 +33,18 @@ const VideoCall: React.FC = () => {
   useEffect(() => {
     const servers = {
       iceServers: [
-        { urls: ["stun:ss-turn2.xirsys.com"] },
+        { urls: ["stun:ss-turn1.xirsys.com"] },
         {
           username:
-            "ugXCOOeTfYNC6lmhFQ8YwVPdIbFM2VHLtDwoyCRRAr7y9FD5X0WzohTZaXVB-cIwAAAAAGf6Ku5sZW1pbmhob2FuZzEyMDQ=",
-          credential: "2335af5e-177c-11f0-9a69-0242ac140004",
+            "08WW7cklybuAgURxv2htGziXJBbsMwpmBZlN6p-Y4VwLnm-lMYVz-feE5zo3S58WAAAAAGf-dMFsZW1pbmhob2FuZzEyMDQwNA==",
+          credential: "7dd6da1a-1a0a-11f0-a88c-0242ac140004",
           urls: [
-            "turn:ss-turn2.xirsys.com:80?transport=udp",
-            "turn:ss-turn2.xirsys.com:3478?transport=udp",
-            "turn:ss-turn2.xirsys.com:80?transport=tcp",
-            "turn:ss-turn2.xirsys.com:3478?transport=tcp",
-            "turns:ss-turn2.xirsys.com:443?transport=tcp",
-            "turns:ss-turn2.xirsys.com:5349?transport=tcp",
+            "turn:ss-turn1.xirsys.com:80?transport=udp",
+            "turn:ss-turn1.xirsys.com:3478?transport=udp",
+            "turn:ss-turn1.xirsys.com:80?transport=tcp",
+            "turn:ss-turn1.xirsys.com:3478?transport=tcp",
+            "turns:ss-turn1.xirsys.com:443?transport=tcp",
+            "turns:ss-turn1.xirsys.com:5349?transport=tcp",
           ],
         },
       ],
