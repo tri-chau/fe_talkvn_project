@@ -26,7 +26,7 @@ const VideoCall: React.FC = () => {
   const iceCandidatesQueue = useRef<RTCIceCandidate[]>([]);
   const screenStreamRef = useRef<MediaStream | null>(null); // Ref để lưu stream màn hình
 
-  const [isMuted, setIsMuted] = useState(false); // Trạng thái mic
+  const [isMuted, setIsMuted] = useState(true); // Trạng thái mic
   const [isScreenSharing, setIsScreenSharing] = useState(false); // Trạng thái chia sẻ màn hình
   const [isCameraOn, setIsCameraOn] = useState(true); // Trạng thái camera
 
