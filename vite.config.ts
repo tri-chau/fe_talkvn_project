@@ -11,6 +11,14 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       open: true,
+      // ...(mode === "development"
+      //   ? {
+      //       https: {
+      //         key: fs.readFileSync("C:/Users/ASUS/Downloads/localhost-key.pem"),
+      //         cert: fs.readFileSync("C:/Users/ASUS/Downloads/localhost.pem"),
+      //       },
+      //     }
+      //   : {}),
     },
   };
 });
