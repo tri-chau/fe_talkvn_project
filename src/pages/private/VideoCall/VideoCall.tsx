@@ -50,22 +50,39 @@ const VideoCall: React.FC = () => {
       // ],
 
       iceServers: [
-        { urls: ["stun:ss-turn2.xirsys.com"] },
+        { urls: ["stun:ss-turn1.xirsys.com"] },
         {
           username:
-            "ugXCOOeTfYNC6lmhFQ8YwVPdIbFM2VHLtDwoyCRRAr7y9FD5X0WzohTZaXVB-cIwAAAAAGf6Ku5sZW1pbmhob2FuZzEyMDQ=",
-          credential: "2335af5e-177c-11f0-9a69-0242ac140004",
+            "08WW7cklybuAgURxv2htGziXJBbsMwpmBZlN6p-Y4VwLnm-lMYVz-feE5zo3S58WAAAAAGf-dMFsZW1pbmhob2FuZzEyMDQwNA==",
+          credential: "7dd6da1a-1a0a-11f0-a88c-0242ac140004",
           urls: [
-            "turn:ss-turn2.xirsys.com:80?transport=udp",
-            "turn:ss-turn2.xirsys.com:3478?transport=udp",
-            "turn:ss-turn2.xirsys.com:80?transport=tcp",
-            "turn:ss-turn2.xirsys.com:3478?transport=tcp",
-            "turns:ss-turn2.xirsys.com:443?transport=tcp",
-            "turns:ss-turn2.xirsys.com:5349?transport=tcp",
+            "turn:ss-turn1.xirsys.com:80?transport=udp",
+            "turn:ss-turn1.xirsys.com:3478?transport=udp",
+            "turn:ss-turn1.xirsys.com:80?transport=tcp",
+            "turn:ss-turn1.xirsys.com:3478?transport=tcp",
+            "turns:ss-turn1.xirsys.com:443?transport=tcp",
+            "turns:ss-turn1.xirsys.com:5349?transport=tcp",
           ],
         },
       ],
     };
+    //   iceServers: [
+    //     { urls: ["stun:hk-turn1.xirsys.com"] },
+    //     {
+    //       username:
+    //         "t1v73xZPzrQUPUYowwXemStxpbhCDT3aafFfGTzjGMmsR929Wrjs20Ujnd5bBeiOAAAAAGdtFGt0aGFuaHB0MTExMA==",
+    //       credential: "d3e1521c-c363-11ef-8aef-0242ac120004",
+    //       urls: [
+    //         "turn:hk-turn1.xirsys.com:80?transport=udp",
+    //         "turn:hk-turn1.xirsys.com:3478?transport=udp",
+    //         "turn:hk-turn1.xirsys.com:80?transport=tcp",
+    //         "turn:hk-turn1.xirsys.com:3478?transport=tcp",
+    //         "turns:hk-turn1.xirsys.com:443?transport=tcp",
+    //         "turns:hk-turn1.xirsys.com:5349?transport=tcp",
+    //       ],
+    //     },
+    //   ],
+    // };
 
     // const servers = {
     //   iceServers: [
@@ -83,6 +100,7 @@ const VideoCall: React.FC = () => {
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         console.log("Sending ICE candidate:", event.candidate);
+        console.log("ICE Candidate Details:", event.candidate.candidate);
         connectionRef.current?.invoke(
           WEB_SOCKET_EVENT.SEND_ICE_CANDIDATE,
           conversationId,
@@ -111,7 +129,7 @@ const VideoCall: React.FC = () => {
     };
 
     const connection = new HubConnectionBuilder()
-      .withUrl(`${socketBaseUrl}/hubs/conversation`, {
+      .withUrl(`${socketBaseUrl}/hubs/textChat`, {
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
       })
@@ -121,37 +139,50 @@ const VideoCall: React.FC = () => {
     connectionRef.current = connection;
 
     connection.on(WEB_SOCKET_EVENT.RECEIVE_OFFER, async (connectionId, sdp) => {
-      console.log("Received Offer:", sdp);
-      await peerConnection.setRemoteDescription(
-        new RTCSessionDescription({ type: "offer", sdp })
-      );
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      connection.invoke(
-        WEB_SOCKET_EVENT.SEND_ANSWER,
-        conversationId,
-        answer.sdp
-      );
-      while (iceCandidatesQueue.current.length > 0) {
-        const candidate = iceCandidatesQueue.current.shift();
-        if (candidate) {
-          await peerConnection.addIceCandidate(candidate);
-        }
-      }
-    });
-
-    connection.on(
-      WEB_SOCKET_EVENT.RECEIVE_ANSWER,
-      async (connectionId, sdp) => {
-        console.log("Received Answer:", sdp);
+      try {
+        console.log("Received Offer:", sdp);
         await peerConnection.setRemoteDescription(
-          new RTCSessionDescription({ type: "answer", sdp })
+          new RTCSessionDescription({ type: "offer", sdp })
+        );
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        connection.invoke(
+          WEB_SOCKET_EVENT.SEND_ANSWER,
+          conversationId,
+          answer.sdp
         );
         while (iceCandidatesQueue.current.length > 0) {
           const candidate = iceCandidatesQueue.current.shift();
           if (candidate) {
             await peerConnection.addIceCandidate(candidate);
           }
+        }
+      } catch (error) {
+        console.error("Error handling received offer:", error);
+      }
+    });
+
+    connection.on(
+      WEB_SOCKET_EVENT.RECEIVE_ANSWER,
+      async (connectionId, sdp) => {
+        try {
+          console.log("Received Answer:", sdp);
+          if (peerConnection.signalingState === "have-local-offer") {
+            await peerConnection.setRemoteDescription(
+              new RTCSessionDescription({ type: "answer", sdp })
+            );
+            while (iceCandidatesQueue.current.length > 0) {
+              const candidate = iceCandidatesQueue.current.shift();
+              if (candidate) await peerConnection.addIceCandidate(candidate);
+            }
+          } else {
+            console.warn(
+              "⚠️ Cannot set answer, invalid signaling state:",
+              peerConnection.signalingState
+            );
+          }
+        } catch (error) {
+          console.error("Error handling received answer:", error);
         }
       }
     );
@@ -163,8 +194,10 @@ const VideoCall: React.FC = () => {
           const iceCandidate = new RTCIceCandidate(JSON.parse(candidate));
           console.log("Received ICE candidate:", iceCandidate);
           if (peerConnection.remoteDescription) {
+            console.log("🧊 Adding ICE directly");
             await peerConnection.addIceCandidate(iceCandidate);
           } else {
+            console.log("🕓 Queuing ICE until remoteDescription is set");
             iceCandidatesQueue.current.push(iceCandidate);
           }
         } catch (error) {
@@ -213,6 +246,7 @@ const VideoCall: React.FC = () => {
 
     peerConnection.ontrack = (event) => {
       const [stream] = event.streams;
+      console.log("Got remote track!");
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = stream;
       }
@@ -328,6 +362,7 @@ const VideoCall: React.FC = () => {
             )}
             style={{
               aspectRatio: "16/9",
+              transform: "scaleX(-1)", // Lật video ngang
             }}
           />
           <h3>Local Video</h3>

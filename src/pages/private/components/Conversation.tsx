@@ -232,6 +232,7 @@ function Conversation({
                   "width=800,height=600"
                 );
               }}
+
             >
               Accept
             </button>
