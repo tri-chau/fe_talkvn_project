@@ -53,7 +53,8 @@ const VideoCall: React.FC = () => {
         { urls: ["stun:ss-turn2.xirsys.com"] },
         {
           username:
-            "ugXCOOeTfYNC6lmhFQ8YwVPdIbFM2VHLtDwoyCRRAr7y9FD5X0WzohTZaXVB-cIwAAAAAGf6Ku5sZW1pbmhob2FuZzEyMDQ=",
+            "ugXCOOeTfYNC6lmhFQ8YwVPdIbFM2VHLtDwoyCRRAr7y9FD5X0W" +
+            "zohTZaXVB- cIwAAAAAGf6Ku5sZW1pbmhob2FuZzEyMDQ=",
           credential: "2335af5e-177c-11f0-9a69-0242ac140004",
           urls: [
             "turn:ss-turn2.xirsys.com:80?transport=udp",
