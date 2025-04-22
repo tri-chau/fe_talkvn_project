@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "./LeftSideBar.css";
 
 function ChannelSideBar() {
     
