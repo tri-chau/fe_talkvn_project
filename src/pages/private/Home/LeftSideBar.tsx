@@ -56,47 +56,33 @@ function ChannelSideBar() {
             {channels.map((channel, index) => (
                 <div key={index} className="mt-[20px] mb-[20px] ml-[14px] mr-[6px] ">
                     {/* Channel title */}
-                    <span className="flex items-center gap-2 p-[4px] text-[#80848E] cursor-pointer hover:bg-[#3A3C40] hover:text-[#DBDEE1] rounded-[4px] transition duration-200 ease-in-out"
+                    <span className="flex relative group items-center gap-2 p-[4px] text-[#80848E] stroke-[#80848E] cursor-pointer hover:bg-[#3A3C40] hover:text-[#DBDEE1] hover:stroke-[#DBDEE1] rounded-[4px] transition duration-200 ease-in-out"
                     onClick={() => toggleChannel(index)}
                     >
                         {/* Chevron icon */}
                         {openStates[index] ? (
                         // Chevron Down
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="22"
-                            height="22"
-                            viewBox="0 0 22 22"
-                            fill="none"
-                        >
-                            <path
-                            d="M5.5 8.25L11 13.75L16.5 8.25"
-                            stroke="#80848E"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            />
+                        <svg className="group-hover:stroke-[#80848E]" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none"                        >
+                            <path d="M5.5 8.25L11 13.75L16.5 8.25" stroke="#currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                         ) : (
                         // Chevron Right
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="22"
-                            height="22"
-                            viewBox="0 0 22 22"
-                            fill="none"
-                        >
-                            <path
-                            d="M8.25 5.5L13.75 11L8.25 16.5"
-                            stroke="#80848E"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            />
+                        <svg className="group-hover:stroke-[#80848E]" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                            <path d="M8.25 5.5L13.75 11L8.25 16.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                         )}
-                        <span className="text-sm font-bold" style={{ fontSize: "16px", fontWeight: 600 }}>
+                        <span className="font-bold" style={{ fontSize: "16px", fontWeight: 600 }}>
                             {channel.category}
+                        </span>
+                        {/* Add channel icon */}
+                        <span className="ml-auto mr-4 relative group/icon flex items-center opacity-0 group-hover:opacity-100 ">
+                            <svg className="" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                                <path d="M11 4.58333V17.4167M4.58334 11H17.4167" stroke="#F5F5F5" stroke-opacity="0.4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        {/* Tooltip */}
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 border border-[#B5BAC1] mt-1 mb-1 px-2 py-1 bg-[#2C2C2C] text-[#F5F5F5] text-xs rounded shadow-lg whitespace-nowrap z-10 hidden group-hover/icon:block" style={{ fontSize: "11px"}}>
+                        Thêm kênh
+                        </div>
                         </span>
                     </span>
                     
@@ -113,13 +99,15 @@ function ChannelSideBar() {
                                 }}
                             >   
                                 {/* Icon # */}
-                                <svg className="mr-2 group-hover: stroke-white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 22 22" fill="none">
+                                <svg className="mr-2 group-hover:stroke-[#80848E]" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 22 22" fill="none">
                                     <path d="M3.66667 8.25H18.3333M3.66667 13.75H18.3333M9.16667 2.75L7.33333 19.25M14.6667 2.75L12.8333 19.25" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                 </svg>
                                 {item}
 
                                 {/* Icon hover */}
-                                <span className="absolute right-0 flex items-center mr-2 gap-1 opacity-0 group-hover:opacity-100">
+                                <span className="absolute right-0 flex items-center mr-4 gap-1 opacity-0 group-hover:opacity-100">
+                                    {/* Add user icon */}
+                                    <span className="relative group/icon flex items-center">
                                     <svg className="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 22 22" fill="none">
                                     <g clip-path="url(#clip0_153_103)">
                                         <path d="M14.6667 19.25V17.4167C14.6667 16.4442 14.2804 15.5116 13.5927 14.8239C12.9051 14.1363 11.9725 13.75 11 13.75H4.58335C3.61089 13.75 2.67826 14.1363 1.99063 14.8239C1.303 15.5116 0.916687 16.4442 0.916687 17.4167V19.25M18.3334 7.33333V12.8333M21.0834 10.0833H15.5834M11.4584 6.41667C11.4584 8.44171 9.81673 10.0833 7.79169 10.0833C5.76664 10.0833 4.12502 8.44171 4.12502 6.41667C4.12502 4.39162 5.76664 2.75 7.79169 2.75C9.81673 2.75 11.4584 4.39162 11.4584 6.41667Z" stroke="#DBDEE1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -130,8 +118,13 @@ function ChannelSideBar() {
                                         </clipPath>
                                     </defs>
                                     </svg>
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 border border-[#B5BAC1] mt-1 mb-1 px-2 py-1 bg-[#2C2C2C] text-[#F5F5F5] text-xs rounded shadow-lg whitespace-nowrap z-10 hidden group-hover/icon:block" style={{ fontSize: "11px"}}>
+                                    Thêm thành viên
+                                    </div>
+                                    </span>
 
-
+                                    {/* Setting icon */}
+                                    <span className="relative group/icon flex items-center">
                                     <svg className="" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 22 22" fill="none">
                                     <g clip-path="url(#clip0_146_559)">
                                         <path d="M11.1629 13.5958C12.6646 13.5958 13.882 12.3784 13.882 10.8766C13.882 9.37488 12.6646 8.15748 11.1629 8.15748C9.66112 8.15748 8.44372 9.37488 8.44372 10.8766C8.44372 12.3784 9.66112 13.5958 11.1629 13.5958Z" stroke="#DBDEE1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -143,6 +136,11 @@ function ChannelSideBar() {
                                         </clipPath>
                                     </defs>
                                     </svg>
+
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 border border-[#B5BAC1] mt-1 mb-1 px-2 py-1 bg-[#2C2C2C] text-[#F5F5F5] text-xs rounded shadow-lg whitespace-nowrap z-10 hidden group-hover/icon:block" style={{ fontSize: "11px"}}>
+                                    Cài đặt
+                                    </div>
+                                    </span>
                                 </span>
                             </li>
                         ))}
