@@ -109,7 +109,7 @@ function LoginPage() {
           </button>
 
           <button
-            disabled={isLoginLoading}
+            type="button"  
             onClick={onLoginByGoogle}
             className="px-4 text-xs font-semibold text-white py-2 bg-[#4BB4F8] rounded-md"
           >
