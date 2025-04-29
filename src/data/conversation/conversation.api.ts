@@ -104,7 +104,7 @@ const conversationApi = usersApi.injectEndpoints({
       { username: string } // kiểu dữ liệu gửi lên
     >({
       query: (body) => ({
-        url: `/conversations/create`,
+        url: `/conversations/search`,
         method: HTTP_METHOD.POST,
         body,
       }),
